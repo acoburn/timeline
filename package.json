@@ -1,0 +1,20 @@
+{
+  "name": "timeline",
+  "version": "0.0.1",
+  "description": "yet another timeline application",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acoburn/timeline.git"
+  },
+  "author": "Aaron Coburn <acoburn@amherst.edu>",
+  "license": "Apache2",
+  "bugs": {
+    "url": "https://github.com/acoburn/timeline/issues"
+  },
+  "homepage": "https://github.com/acoburn/timeline",
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "uglify-js": "^2.4.16",
+    "less": "^2.1.1"
+  }
+}
