@@ -49,11 +49,23 @@
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
 
+body {
+  font-family: 'Open Sans', sans-serif;
+}
 header {
     .navbar;
     .navbar-default;
     .navbar-fixed-top;
     min-height: 35px;
+    padding: 5px 10px;
+    h1 {
+        margin: 0;
+        .pull-left;
+    }
+    form {
+        .pull-right;
+        padding: 10px 20px;
+    }
 }
 
 article {
@@ -67,5 +79,8 @@ footer {
     .navbar-fixed-bottom;
     text-align:center;
     min-height: 30px;
+    ul {
+        .list-inline;
+    }
 }
 
