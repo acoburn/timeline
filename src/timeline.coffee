@@ -1,5 +1,3 @@
-Config = solr: "/solr/lgbt/select?wt=json&"
-
 App = App || {}
 
 # Models
@@ -67,16 +65,15 @@ App.query = new Query
 App.results = new Results
 App.stats = new Results
 $(->
-
     new QueryForm el: 'header'
     new Message el: '#message'
     new Timeline el: '#timeline'
     new Summary el: '#summary'
-
-    $.get("#{Config.solr}q=*&rows=0&stats=true&stats.field=date", (data) ->
+    
+    $.get solr_query_uri(q: "*", rows: 0), (data) ->
         App.stats.set
            min: data.stats.stats_fields.date.min
            max: data.stats.stats_fields.date.max
-    )
+
     App.results.set('foo', 'bar')
 )
