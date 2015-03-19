@@ -25,7 +25,7 @@ def parse_date(date):
 def to_solr(id, data):
     text_fields = [
             "modified", "editor", "reviewed", "description", "text",
-            "step", "source"]
+            "step", "source", "month", "year"]
     
     split_fields = [
             "region", "country", "municipality",
