@@ -113,25 +113,35 @@
        a "*" only at the start or the end.  -->
 
    <field name="modified" type="date" indexed="false" stored="false"/>
-   <field name="editor" type="string" indexed="false" stored="false"/>
-   <field name="reviewed" type="string" indexed="false" stored="false"/>
-   <field name="description" type="text_en" indexed="true" stored="true"/>
-   <field name="text" type="text_en" indexed="true" stored="true"/>
-   <field name="keyword" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="categories" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="date" type="date" indexed="true" stored="true"/>
-   <!-- the year and month fields may be unnecessary -->
-   <field name="year" type="int" indexed="true" stored="true"/>
-   <field name="month" type="string" indexed="true" stored="true"/>
+   <field name="contributor" type="string" indexed="false" stored="false"/>
+   <field name="reviewer" type="string" indexed="false" stored="false"/>
+   <field name="title" type="text_general" indexed="true" stored="true"/>
+   <field name="description" type="text_general" indexed="true" stored="true"/>
+   <field name="start" type="date" indexed="true" stored="true"/>
+   <field name="end" type="date" indexed="true" stored="true"/>
+   <field name="category" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="region" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="country" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="municipality" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="location" type="location" indexed="true" stored="true" multiValued="true"/>
-   <field name="step" type="string" indexed="true" stored="true" multiValued="true"/>
+   <field name="progress" type="string" indexed="true" stored="true"/>
    <field name="people" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="relationships" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="source" type="string" indexed="false" stored="true"/>
-   <field name="source_date" type="date" indexed="true" stored="true"/>
+   <field name="organization" type="string" indexed="true" stored="true" multiValued="true"/>
+   <field name="keyword" type="string" indexed="true" stored="true" multiValued="true"/>
+   <field name="related" type="string" indexed="true" stored="true" multiValued="true"/>
+   <field name="symbol" type="string" indexed="true" stored="true"/>
+   <field name="legislation" type="text_general" indexed="true" stored="true"/>
+   <field name="source_title" type="text_general" indexed="false" stored="true" multiValued="true"/>
+   <field name="source_author" type="text_general" indexed="false" stored="true" multiValued="true"/>
+   <field name="source_date" type="date" indexed="true" stored="true" multiValued="true"/>
+   <field name="source_url" type="string" indexed="false" stored="true" multiValued="true"/>
+   <field name="source_citation" type="string" indexed="false" stored="true" multiValued="true"/>
+   <field name="text" type="text_general" indexed="true" stored="true"/>
+   <field name="media_title" type="text_general" indexed="true" stored="true"/>
+   <field name="media_credit" type="text_general" indexed="true" stored="true"/>
+   <field name="media_caption" type="text_general" indexed="true" stored="true"/>
+
+   <!-- the year field is used for faceting -->
+   <field name="year" type="int" indexed="true" stored="true"/>
    <!-- The media_uri field may be something like image:http://example.com/image.jpg or
         wowza:http://stream01.ats.amherst.edu/vod/movie.m4v -->
    <field name="media_uri" type="string" indexed="false" stored="true" multiValued="true"/>
