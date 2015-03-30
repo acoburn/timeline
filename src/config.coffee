@@ -2,6 +2,6 @@ Config =
     solr: "/solr/lgbt/select?"
     search_params:
         wt: "json"
-        sort: "date desc"
+        sort: "start desc"
         stats: "true"
-        "stats.field": "date"
+        "stats.field": "start"

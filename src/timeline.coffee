@@ -40,22 +40,22 @@ class Timeline extends Backbone.View
 
     render: =>
         data = App.results.get('data')
-        
+
         @$el.html('<svg></svg>')
         svg = d3.select(@$el.find('svg')[0])
 
         h = @$el.height() - 25
         x = d3.time.scale()
-                .domain(d3.extent(data.map (a) -> new Date a.date))
-                .range([20, @$el.width() - 20])
-                
+              .domain(d3.extent(data.map (a) -> a.date))
+              .range([20, @$el.width() - 20])
+
         y = d3.scale.linear()
-                .domain([0, h])
-                .range([h, 0])
+              .domain([0, h])
+              .range([h, 0])
 
         # context data
         context = svg.append("g")
-                .attr("class", "context")
+            .attr("class", "context")
 
         # circles
         r = d3.scale.linear()
@@ -66,10 +66,10 @@ class Timeline extends Backbone.View
             .data(data)
             .enter()
             .append("circle")
-            .attr("data-title", (d) -> d.description)
+            .attr("data-title", (d) -> d.title)
             .attr("data-id", (d) -> d.id)
             .attr("transform", "translate(0, 10)")
-            .attr("cx", (d) -> x(new Date d.date))
+            .attr("cx", (d) -> x(d.date))
             .attr("cy", -> Math.floor(Math.random() * (h - 25)))
             .attr("r", 5)
 
@@ -108,7 +108,7 @@ class Summary extends Backbone.View
         x = d3.time.scale()
                 .domain(d3.extent(data.map (a) -> a.date))
                 .range([20, @$el.width() - 20])
-                
+
         y = d3.scale.linear()
                 .domain([0, d3.max(data.map (a) -> a.value)])
                 .range([h, 0])
@@ -117,7 +117,7 @@ class Summary extends Backbone.View
             x.domain(brush.extent())
         #    focus.select(".area").attr("d", area)
             #focus.select(".x.axis").call(xAxis)
-            
+
         brush = d3.svg.brush()
                 .x(x)
                 .on("brush", brushed)
@@ -171,16 +171,16 @@ $(->
     new Message el: '#message'
     new Timeline el: '#timeline'
     new Summary el: '#summary'
-    
+
     $.get solr_query_uri(q: "*", rows: 30), (data) ->
         App.results.set
-           min: data.stats.stats_fields.date.min
-           max: data.stats.stats_fields.date.max
+           min: data.stats.stats_fields.start.min
+           max: data.stats.stats_fields.start.max
            count: data.response.numFound
-           data: data.response.docs.map((x) -> id: x.id, date: new Date(x.date), description: x.description).reverse()
+           data: data.response.docs.map((x) -> id: x.id, date: new Date(x.start), title: x.title).reverse()
            index: _.indexBy(data.response.docs, "id")
-           
-    $.get 'data/summary.json', (data) ->
-        App.stats.set data: data
+
+    $.get solr_query_uri(q: "*", rows: 0, facet: true, "facet.field": "year"), (data) ->
+        App.stats.set data: _.zip.apply(null, _.partition(data.facet_counts.facet_fields.year.map((x) -> parseInt(x, 10)), (_x, i) -> i % 2 == 0))
 
 )
