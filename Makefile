@@ -6,6 +6,7 @@ javascript:
 	@echo "Compiling javascript ... \c"
 	@cat ./src/config.coffee ./src/helper.coffee \
 		./src/models/query.coffee \
+		./src/views/prev.coffee ./src/views/next.coffee \
 		./src/views/modal.coffee ./src/views/summary.coffee \
 		./src/views/query_form.coffee ./src/views/message.coffee \
 		./src/views/timeline.coffee \

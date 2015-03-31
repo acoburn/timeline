@@ -9,14 +9,17 @@ App.preview = new Backbone.Model
 $(->
     new QueryForm el: 'header'
     new Message el: '#message'
-    new Timeline el: '#timeline'
+    new Timeline el: '#results'
     new Summary el: '#summary'
     new Modal el: '#selected'
+    new Prev el: '#prev'
+    new Next el: '#next'
 
     $.get solr_query_uri(q: "*", rows: Config.rows), (data) ->
         App.results.set
            min: data.stats.stats_fields.start.min
            max: data.stats.stats_fields.start.max
+           start: data.response.start
            count: data.response.numFound
            index: _.indexBy data.response.docs, "id"
            data: data.response.docs.map((x, i) ->
