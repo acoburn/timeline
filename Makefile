@@ -9,6 +9,9 @@ javascript:
 		--mangle --compress --screw-ie8 \
 		--preamble "// (c) 2014 Amherst College. Author: Aaron Coburn <acoburn@amherst.edu>" \
 		--output ./js/lgbt_timeline.min.js
+	@node_modules/uglify-js/bin/uglifyjs ./js/bootstrap/modal.js \
+		--mangle --compress --screw-ie8 \
+		--output ./js/bootstrap.min.js
 	@echo "done"
 
 css: stylesheet
