@@ -8,8 +8,6 @@ class Query extends Backbone.Model
         page: 0
         rows: 20
 
-class Results extends Backbone.Model
-
 # Views
 class QueryForm extends Backbone.View
     events:
@@ -21,7 +19,7 @@ class QueryForm extends Backbone.View
                 q: @$('input').val()
                 filters: []
                 page: 0
-                rows: 20
+                rows: Config.rows
             @$('input').blur()
             false
 
@@ -32,26 +30,54 @@ class Message extends Backbone.View
     render: =>
         @$el.html(App.query.get 'q')
 
+class Modal extends Backbone.View
+    initialize: ->
+        App.selected.on 'change', @render
 
+    render: =>
+        if App.selected.get 'id'
+            console.log App.selected.toJSON()
+            data = App.selected.toJSON()
+            data.date_string = format_date_range(data.start, data.end)
+            data.locations = _.zip(data.municipality, data.country, data.region).map (x) ->
+                _.compact(x).join ', '
+            data.sources = _.zip(data.source_citation, data.source_title, data.source_url)
+            tpl = _.template($('#selected-modal-tpl').html())
+            @$el.html(tpl data: data)
+            @$('.modal').modal
+                show: true
+                backdrop: true
+        else
+            @$el.html ''
+
+    events:
+        'hidden.bs.modal .modal': ->
+            App.selected.clear()
+        
 class Timeline extends Backbone.View
     initialize: ->
         App.results.on 'change', @render
         $(window).resize(_.debounce(@render, 300))
 
     render: =>
+        padding = 25
         data = App.results.get('data')
 
         @$el.html('<svg></svg>')
-        svg = d3.select(@$el.find('svg')[0])
+        
+        h = @$el.height() - padding
+        epsilon = .75 * h / Config.packing
 
-        h = @$el.height() - 25
         x = d3.time.scale()
               .domain(d3.extent(data.map (a) -> a.date))
-              .range([20, @$el.width() - 20])
+              .range([padding, @$el.width() - padding])
 
         y = d3.scale.linear()
-              .domain([0, h])
-              .range([h, 0])
+              .domain(d3.extent(data.map (a) -> a.pos))
+              .range([h - epsilon / 2 - padding, epsilon / 2 + padding])
+
+        # svg element
+        svg = d3.select(@$el.find('svg')[0])
 
         # context data
         context = svg.append("g")
@@ -69,8 +95,13 @@ class Timeline extends Backbone.View
             .attr("data-title", (d) -> d.title)
             .attr("data-id", (d) -> d.id)
             .attr("transform", "translate(0, 10)")
-            .attr("cx", (d) -> x(d.date))
-            .attr("cy", -> Math.floor(Math.random() * (h - 25)))
+            .attr("fill", (d) ->
+                switch d.progress
+                    when "Forwards" then "green"
+                    when "Backwards" then "red"
+                    else "black")
+            .attr("cx", (d) -> x d.date)
+            .attr("cy", (d) -> y(d.pos) + d.v % epsilon - epsilon / 2)
             .attr("r", 5)
 
         # context axis
@@ -89,7 +120,7 @@ class Timeline extends Backbone.View
         "click circle": (e) ->
             # display full modal
             id = $(e.target).data 'id'
-            console.log App.results.get('index')[id]
+            App.selected.set App.results.get('index')[id]
 
 class Summary extends Backbone.View
     initialize: ->
@@ -163,24 +194,35 @@ class Summary extends Backbone.View
 
 #Impl
 App.query = new Query
-App.results = new Results
-App.stats = new Results
+App.results = new Backbone.Model
+App.stats = new Backbone.Model
+App.selected = new Backbone.Model
+App.preview = new Backbone.Model
 
 $(->
     new QueryForm el: 'header'
     new Message el: '#message'
     new Timeline el: '#timeline'
     new Summary el: '#summary'
+    new Modal el: '#selected'
 
-    $.get solr_query_uri(q: "*", rows: 30), (data) ->
+    $.get solr_query_uri(q: "*", rows: Config.rows), (data) ->
         App.results.set
            min: data.stats.stats_fields.start.min
            max: data.stats.stats_fields.start.max
            count: data.response.numFound
-           data: data.response.docs.map((x) -> id: x.id, date: new Date(x.start), title: x.title).reverse()
-           index: _.indexBy(data.response.docs, "id")
+           index: _.indexBy data.response.docs, "id"
+           data: data.response.docs.map((x, i) ->
+                    id: x.id
+                    pos: i % Config.packing
+                    v: x["_version_"]
+                    date: new Date x.start
+                    progress: x.progress
+                    title: x.title).reverse()
 
     $.get solr_query_uri(q: "*", rows: 0, facet: true, "facet.field": "year"), (data) ->
-        App.stats.set data: _.zip.apply(null, _.partition(data.facet_counts.facet_fields.year.map((x) -> parseInt(x, 10)), (_x, i) -> i % 2 == 0))
+        years = data.facet_counts.facet_fields.year.map (x) -> parseInt x, 10
+        App.stats.set
+            data: _.zip.apply(null, _.partition years, (_x, i) -> i % 2 == 0)
 
 )

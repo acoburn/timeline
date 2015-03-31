@@ -5,3 +5,5 @@ Config =
         sort: "start desc"
         stats: "true"
         "stats.field": "start"
+    packing: 4
+    rows: 30

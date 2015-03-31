@@ -9,7 +9,60 @@
     <title>LGBTQ Timeline of the Americas</title>
 </head>
 <body>
-
+  <script type="text/template" id="selected-modal-tpl">
+    <section class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4><%= data.title %></h4>
+          </div>
+          <div class="modal-body">
+            <p><%= data.date_string %></p>
+            <% if (data.progress) { %>
+              <p class="progress">Progress: <%= data.progress %></p>
+            <% } %>
+            <% if (data.locations) { %>
+              <p class="locations">Locations:
+                <% _.each(data.locations, function (x) { %>
+                  <span><%= x %></span>
+                <% }) %>
+              </p>
+            <% } %>
+            <p class="description"><%= data.description %></p>
+            <% if (data.organization) { %>
+              <p class="organizations">Organizations:
+                <% _.each(data.organization, function (x) { %>
+                  <span><%= x %></span>
+                <% }) %>
+              </p>
+            <% } %>
+            <% if (data.category) { %>
+              <p class="categories">Categories:
+                <% _.each(data.category, function (x) { %>
+                  <span><%= x %></span>
+                <% }) %>
+              </p>
+            <% } %>
+            <% if (data.keyword) { %>
+              <p class="keywords">Keywords:
+                <% _.each(data.keyword, function (x) { %>
+                  <span><%= x %></span>
+                <% }) %>
+              </p>
+            <% } %>
+            <% if (data.sources) { %>
+              <hr>
+              <h5>Sources</h5>
+              <% _.each(data.sources, function (x) { %>
+              <p class="source"><%= x[0] %> <a href="<%= x[2] %>" title="<%= x[1] %>"><i class="fa fa-external-link"></i></a></p>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
+  </script>
   <header>
     <nav>
       <h1>LGBTQ Timeline of the Americas</h1>
@@ -34,12 +87,15 @@
     </section>
     <section id="summary">
     </section>
+    <section id="selected">
+    </section>
   </article>
 
   <script type="text/javascript" src="js/d3.v3.min.js"></script>
   <script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
   <script type="text/javascript" src="js/underscore-min.js"></script>
   <script type="text/javascript" src="js/backbone-min.js"></script>
+  <script type="text/javascript" src="js/bootstrap/modal.js"></script>
   <script type="text/javascript" src="js/lgbt_timeline.js"></script>
 </body>
 </html>
