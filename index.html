@@ -55,7 +55,7 @@
               <hr>
               <h5>Sources</h5>
               <% _.each(data.sources, function (x) { %>
-              <p class="source"><%= x[0] %> <a href="<%= x[2] %>" title="<%= x[1] %>"><i class="fa fa-external-link"></i></a></p>
+              <p class="source"><%= x[0] || x[1] %> <a href="<%= x[2] %>" title="<%= x[1] %>"><i class="fa fa-external-link"></i></a></p>
               <% }) %>
             <% } %>
           </div>

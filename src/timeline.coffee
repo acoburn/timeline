@@ -28,7 +28,7 @@ class Message extends Backbone.View
         App.query.on 'change', @render
 
     render: =>
-        @$el.html(App.query.get 'q')
+        @$el.html App.query.get 'q'
 
 class Modal extends Backbone.View
     initialize: ->
@@ -37,13 +37,16 @@ class Modal extends Backbone.View
     render: =>
         if App.selected.get 'id'
             console.log App.selected.toJSON()
+
             data = App.selected.toJSON()
-            data.date_string = format_date_range(data.start, data.end)
+            data.date_string = format_date_range data.start, data.end
             data.locations = _.zip(data.municipality, data.country, data.region).map (x) ->
                 _.compact(x).join ', '
-            data.sources = _.zip(data.source_citation, data.source_title, data.source_url)
-            tpl = _.template($('#selected-modal-tpl').html())
-            @$el.html(tpl data: data)
+            data.sources = _.zip data.source_citation, data.source_title, data.source_url
+            
+            tpl = _.template $('#selected-modal-tpl').html()
+            
+            @$el.html tpl data: data
             @$('.modal').modal
                 show: true
                 backdrop: true
@@ -57,27 +60,27 @@ class Modal extends Backbone.View
 class Timeline extends Backbone.View
     initialize: ->
         App.results.on 'change', @render
-        $(window).resize(_.debounce(@render, 300))
+        $(window).resize(_.debounce @render, 300)
 
     render: =>
         padding = 25
-        data = App.results.get('data')
+        data = App.results.get 'data'
 
-        @$el.html('<svg></svg>')
+        @$el.html '<svg></svg>'
         
         h = @$el.height() - padding
         epsilon = .75 * h / Config.packing
 
         x = d3.time.scale()
-              .domain(d3.extent(data.map (a) -> a.date))
+              .domain(d3.extent data.map (a) -> a.date)
               .range([padding, @$el.width() - padding])
 
         y = d3.scale.linear()
-              .domain(d3.extent(data.map (a) -> a.pos))
+              .domain(d3.extent data.map (a) -> a.pos)
               .range([h - epsilon / 2 - padding, epsilon / 2 + padding])
 
         # svg element
-        svg = d3.select(@$el.find('svg')[0])
+        svg = d3.select @$el.find('svg')[0]
 
         # context data
         context = svg.append("g")
@@ -85,7 +88,7 @@ class Timeline extends Backbone.View
 
         # circles
         r = d3.scale.linear()
-            .domain([1, d3.max(data.map (a) -> a.value)])
+            .domain([1, d3.max data.map (a) -> a.value])
             .range([2, 15])
 
         context.selectAll("circle")
@@ -118,30 +121,28 @@ class Timeline extends Backbone.View
             console.log $(e.target).data('title')
 
         "click circle": (e) ->
-            # display full modal
-            id = $(e.target).data 'id'
-            App.selected.set App.results.get('index')[id]
+            App.selected.set App.results.get('index')[$(e.target).data 'id']
 
 class Summary extends Backbone.View
     initialize: ->
         App.stats.on 'change', @render
-        $(window).resize(_.debounce(@render, 300))
+        $(window).resize(_.debounce @render, 300)
 
     render: =>
         data = App.stats.get('data').map (a) ->
-                date: new Date(a[0], 1)
+                date: new Date a[0], 1
                 value: a[1]
 
-        @$el.html('<svg></svg>')
-        svg = d3.select(@$el.find('svg')[0])
+        @$el.html '<svg></svg>'
+        svg = d3.select @$el.find('svg')[0]
 
         h = @$el.height() - 25
         x = d3.time.scale()
-                .domain(d3.extent(data.map (a) -> a.date))
+                .domain(d3.extent data.map (a) -> a.date)
                 .range([20, @$el.width() - 20])
 
         y = d3.scale.linear()
-                .domain([0, d3.max(data.map (a) -> a.value)])
+                .domain([0, d3.max data.map (a) -> a.value])
                 .range([h, 0])
 
         brushed = ->
@@ -158,12 +159,12 @@ class Summary extends Backbone.View
                 .attr("class", "context")
         h2 = d3.max(data, (a) -> a.value) + 25
         y2 = d3.scale.linear()
-                .domain([0, d3.max(data.map (a) -> a.value)])
+                .domain([0, d3.max data.map (a) -> a.value])
                 .range([h2, 0])
 
         # circles
         r = d3.scale.linear()
-            .domain([1, d3.max(data.map (a) -> a.value)])
+            .domain([1, d3.max data.map (a) -> a.value])
             .range([2, 15])
 
         context.selectAll("circle")
@@ -223,6 +224,6 @@ $(->
     $.get solr_query_uri(q: "*", rows: 0, facet: true, "facet.field": "year"), (data) ->
         years = data.facet_counts.facet_fields.year.map (x) -> parseInt x, 10
         App.stats.set
-            data: _.zip.apply(null, _.partition years, (_x, i) -> i % 2 == 0)
+            data: _.zip.apply null, _.partition years, (_x, i) -> i % 2 == 0
 
 )
