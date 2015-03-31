@@ -9,6 +9,16 @@
     <title>LGBTQ Timeline of the Americas</title>
 </head>
 <body>
+  <script type="text/template" id="prev-tpl">
+    <div>
+      <i class="fa fa-chevron-left"></i>
+    </div>
+  </script>
+  <script type="text/template" id="next-tpl">
+    <div>
+      <i class="fa fa-chevron-right"></i>
+    </div>
+  </script>
   <script type="text/template" id="selected-modal-tpl">
     <section class="modal fade">
       <div class="modal-dialog">
@@ -89,12 +99,13 @@
   <article>
     <section id="message">
     </section>
+    <section id="prev">
+    </section>
     <section id="timeline">
-      <div id="prev"></div>
-      <div id="results"></div>
-      <div id="next"></div>
     </section>
     <section id="summary">
+    </section>
+    <section id="next">
     </section>
     <section id="selected">
     </section>

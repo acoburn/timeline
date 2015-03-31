@@ -34,4 +34,3 @@ format_date_range = (start, end) ->
         formatted += ", #{s.getUTCFullYear()} - #{MONTHS[e.getUTCMonth()]} #{e.getUTCDate()}, #{e.getUTCFullYear()}"
     formatted
 
-    
