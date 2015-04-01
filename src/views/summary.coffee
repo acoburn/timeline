@@ -1,5 +1,6 @@
 class Summary extends Backbone.View
     initialize: ->
+        App.results.on 'change:extent', @render
         App.stats.on 'change', @render
         $(window).resize(_.debounce @render, 300)
 
@@ -20,15 +21,6 @@ class Summary extends Backbone.View
                 .domain([0, d3.max data.map (a) -> a.value])
                 .range([h, 0])
 
-        brushed = ->
-            x.domain(brush.extent())
-            #focus.select(".area").attr("d", area)
-            #focus.select(".x.axis").call(xAxis)
-
-        brush = d3.svg.brush()
-                .x(x)
-                .on("brush", brushed)
-
         # context data
         context = svg.append("g")
                 .attr("class", "context")
@@ -46,7 +38,7 @@ class Summary extends Backbone.View
             .data(data.filter (a) -> a.value > 0)
             .enter()
             .append("circle")
-            .attr("transform", "translate(0, #{h-h2})")
+            .attr("transform", "translate(0, #{h-h2+12})")
             .attr("cx", (d) -> x d.date)
             .attr("cy", 20)
             .attr("r", (d) -> r d.value)
@@ -59,12 +51,18 @@ class Summary extends Backbone.View
             .attr("transform", "translate(0, #{h})")
             .call(axis)
 
-        context.append("g")
-            .attr("class", "x brush")
-            .attr("transform", "translate(0, #{h-h2})")
-            .call(brush)
-          .selectAll("rect")
-            .attr("y", -6)
-            .attr("height", h2 + 7)
+        if App.results.get 'extent'
+            padding = 6
+            min = App.results.get('extent')[0]
+            max = App.results.get('extent')[1]
+            context.append("g")
+                .attr("class", "x brush")
+                .append("rect")
+                .attr("transform", "translate(0, #{h-h2 + 3})")
+                .attr("y", 0)
+                .attr("height", h2 - 4)
+                .attr("x", x(min) - padding)
+                .attr("width", x(max) - x(min) + padding * 2)
+            
 
 

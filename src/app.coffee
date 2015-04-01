@@ -7,7 +7,7 @@ App =
 
 $(->
     new QueryForm el: 'header'
-    new Message el: '#message'
+    #new Message el: '#message'
     new Timeline el: '#timeline'
     new Summary el: '#summary'
     new Modal el: '#selected'

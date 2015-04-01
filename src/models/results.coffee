@@ -10,6 +10,7 @@ class Results extends Backbone.Model
                start: data.response.start
                count: data.response.numFound
                index: _.indexBy data.response.docs, "id"
+               extent: d3.extent data.response.docs.map (x) -> new Date x.start
                data: data.response.docs.map((x, i) ->
                         id: x.id
                         pos: i % Config.packing

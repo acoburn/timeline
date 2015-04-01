@@ -41,8 +41,24 @@
               </p>
             {{/locations.length}}
 
+            {{#media}}
+              <div class="thumbnail pull-left">
+                <img src="{{url}}" title="{{title}}">
+                <div class="caption">
+                  {{#caption}}
+                  <p>{{caption}}</p>
+                  {{/caption}}
+                  {{#credit}}
+                  <p>{{credit}}</p>
+                  {{/credit}}
+                </div>
+              </div>
+            {{/media}}
+
             <p class="description">{{description}}</p>
 
+            <br>
+            
             {{#organization.length}}
               <p class="organizations">Organizations:
                 {{#organization}}

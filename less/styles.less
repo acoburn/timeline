@@ -102,9 +102,8 @@ article {
         position: absolute;
         bottom: 0;
         box-sizing: border-box;
-        height: 100%;
         width: 3%;
-        padding: 30% 10px;
+        padding: 20% 10px 0 10px;
         z-index: 100;
         color: #333;
         height: 100%;
@@ -132,6 +131,11 @@ article {
     width: 92%;
     margin: 0 4%;
     height: 15%;
+    .brush {
+      stroke: orange;
+      fill-opacity: .125;
+      shape-rendering: crispEdges;
+    }
 }
 
 #selected {
@@ -147,6 +151,17 @@ article {
      padding: 10px 0;
      font-weight: 400;
      font-size: 14px;
+   }
+   .thumbnail {
+       max-width: 40%;
+       margin: 10px 10px 10px 0;
+       img {
+           margin: 0;
+       }
+   }
+
+   br {
+       clear: both;
    }
    .description {
      white-space: pre-line;
