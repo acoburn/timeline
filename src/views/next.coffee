@@ -6,7 +6,7 @@ class Next extends Backbone.View
         if App.results.get('start') > 0
             @$el.html $('#next-tpl').html()
         else
-            @$el.html ""
+            @$el.html "<div></div>"
 
     events:
         'click': ->

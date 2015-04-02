@@ -105,8 +105,10 @@ article {
         width: 3%;
         padding: 20% 10px 0 10px;
         z-index: 100;
-        color: #333;
         height: 100%;
+    }
+    div.step {
+        color: #333;
         transition: background 0.2s ease;
         &:hover {
             background-color: #ddd;
@@ -160,31 +162,45 @@ article {
        }
    }
 
-   br {
+    .organizations, .categories, .keywords, .locations {
        clear: both;
-   }
-   .description {
-     white-space: pre-line;
-   }
-
-   .keywords {
-       margin: 10px 0;
        span {
+           .btn;
+           .btn-default;
            display: inline-block;
-           border: 1px solid green;
            margin: 5px;
            padding: 5px;
-           border-radius: 4px;
        }
-   }
+    }
 
-   .categories {
-       span {
-           border: 1px solid blue;
-           margin: 10px 5px;
-           padding: 5px;
-           border-radius: 4px;
-       }
+    hr {
+        clear: both;
+    }
+    
+    .organizations {
+        span {
+            border-color: black;
+        }
+    }
+   
+    .keywords {
+        span {
+            border-color: green;
+        }
+    }
+    .categories {
+        span {
+            border-color: blue;
+        }
+    }
+    .locations {
+        span {
+            border-color: purple;
+        }
+    }
+
+   .description {
+     white-space: pre-line;
    }
 
    .progress {

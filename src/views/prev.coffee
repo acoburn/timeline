@@ -6,7 +6,7 @@ class Prev extends Backbone.View
         if App.results.offset() < App.results.get 'count'
             @$el.html $('#prev-tpl').html()
         else
-            @$el.html ""
+            @$el.html "<div></div>"
 
     events:
         'click': ->

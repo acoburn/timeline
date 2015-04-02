@@ -8,8 +8,9 @@ class QueryForm extends Backbone.View
                 q: @$('input').val()
                 filters: []
                 page: 0
-                rows: Config.rows
             @$('input').blur()
+            App.results.build_results App.query.get('q'), 0
+            App.stats.build_summary App.query.get 'q'
             false
 
 

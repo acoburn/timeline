@@ -10,12 +10,12 @@
 </head>
 <body>
   <script type="text/template" id="prev-tpl">
-    <div>
+    <div class="step">
       <i class="fa fa-chevron-left"></i>
     </div>
   </script>
   <script type="text/template" id="next-tpl">
-    <div>
+    <div class="step">
       <i class="fa fa-chevron-right"></i>
     </div>
   </script>
@@ -28,13 +28,14 @@
             <h2>{{title}}</h2>
           </div>
           <div class="modal-body">
-            <p>{{date_string}}</p>
+            <p><i class="fa fa-calendar"></i> {{date_string}}</p>
             {{#progress}}
-            <p class="progress">Progress: {{progress}}</p>
+            <p class="progress"><i class="fa fa-line-chart"></i> {{progress}}</p>
             {{/progress}}
 
             {{#locations.length}}
-              <p class="locations">Locations:
+            <p class="locations">
+                <i class="fa fa-globe"></i>
                 {{#locations}}
                   <span>{{.}}</span>
                 {{/locations}}
@@ -57,10 +58,9 @@
 
             <p class="description">{{description}}</p>
 
-            <br>
-            
             {{#organization.length}}
-              <p class="organizations">Organizations:
+            <p class="organizations">
+              Organizations:
                 {{#organization}}
                 <span>{{.}}</span>
                 {{/organization}}
