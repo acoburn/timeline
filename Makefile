@@ -9,6 +9,7 @@ javascript:
 		./src/models/results.coffee \
 		./src/models/stats.coffee \
 		./src/models/query.coffee \
+		./src/collections/categories.coffee \
 		./src/views/prev.coffee \
 		./src/views/next.coffee \
 		./src/views/modal.coffee \

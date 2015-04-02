@@ -4,6 +4,7 @@ App =
     stats: new Stats
     selected: new Backbone.Model
     preview: new Backbone.Model
+    categories: new Categories
 
 $(->
     new QueryForm el: 'header'
@@ -14,6 +15,8 @@ $(->
     new Prev el: '#prev'
     new Next el: '#next'
 
-    App.results.build_results App.query.get('q'), App.query.get('page')
-    App.stats.build_summary App.query.get('q')
+    App.categories.fetch
+        success: ->
+            App.results.build_results App.query.get('q'), App.query.get('page')
+            App.stats.build_summary App.query.get('q')
 )

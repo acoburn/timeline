@@ -30,6 +30,7 @@ class Results extends Backbone.Model
                             v: x["_version_"]
                             date: new Date x.start
                             progress: x.progress
+                            category: _.head x.category
                             title: x.title).reverse()
             else
                 @.set

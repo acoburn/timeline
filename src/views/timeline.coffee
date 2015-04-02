@@ -39,6 +39,15 @@ class Timeline extends Backbone.View
 
             svg.call tip
 
+            # categories
+            categories = d3.scale.ordinal()
+                            .domain(App.categories.toJSON().map (x) -> x.category)
+                            .range(_.range(App.categories.length))
+
+            # colors
+            colors = d3.scale.linear().domain([0, App.categories.length])
+                            .range(["orange", "blue"])
+
             # circles
             r = d3.scale.linear()
                 .domain([1, d3.max data.map (a) -> a.value])
@@ -52,13 +61,10 @@ class Timeline extends Backbone.View
                 .attr("data-id", (d) -> d.id)
                 .attr("transform", "translate(0, 10)")
                 .attr("fill", (d) ->
-                    switch d.progress
-                        when "Forwards" then "green"
-                        when "Backwards" then "red"
-                        else "black")
+                    if d.category then colors categories d.category else "black")
                 .attr("cx", (d) -> x d.date)
                 .attr("cy", (d) -> y(d.pos) + d.v % epsilon - epsilon / 2)
-                .attr("r", 5)
+                .attr("r", 6)
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide)
                 .on('click', tip.hide)
@@ -72,13 +78,6 @@ class Timeline extends Backbone.View
                 .call(axis)
 
     events:
-        #"mouseover circle": (e) ->
-            # disploy popup
-            #console.log $(e.target).data('title')
-
-        #"mouseout circle": (e) ->
-            #console.log $(e.target).data('id')
-
         "click circle": (e) ->
             App.selected.set App.results.get('index')[$(e.target).data 'id']
 
