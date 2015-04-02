@@ -101,13 +101,13 @@ article {
     div {
         position: absolute;
         bottom: 0;
-        box-sizing: border-box;
+        /*box-sizing: border-box;*/
         width: 3%;
-        padding: 20% 10px 0 10px;
         z-index: 100;
         height: 100%;
     }
     div.step {
+        padding: 30% 10px 0 10px;
         background-color: #efefef;
         color: #333;
         transition: background 0.2s ease;
@@ -126,6 +126,38 @@ article {
     div {
         right: 0;
     }
+}
+
+
+.tooltip {
+  line-height: 1.5;
+  max-width: 250px;
+  z-index: 2000;
+  font-weight: bold;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.tooltip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.6);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.tooltip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
 }
 
 #summary {
