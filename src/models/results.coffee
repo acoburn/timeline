@@ -2,11 +2,23 @@ class Results extends Backbone.Model
     offset: ->
         @.get('data').length + @.get 'start'
 
+    is_proper_subset: ->
+        ex = @.get 'extent'
+        if ex
+            iso = ex.map (x) -> x.toISOString()
+            if iso[0] is @.get('min').toISOString() and iso[1] is @.get('max').toISOString()
+                false
+            else
+                true
+        else
+            false
+
+
     build_results: (q, page) ->
         $.get solr_query_uri(q: q, start: page * Config.rows, rows: Config.rows), (data) =>
             @.set
-               min: data.stats.stats_fields.start.min
-               max: data.stats.stats_fields.start.max
+               min: new Date data.stats.stats_fields.start.min
+               max: new Date data.stats.stats_fields.start.max
                start: data.response.start
                count: data.response.numFound
                index: _.indexBy data.response.docs, "id"

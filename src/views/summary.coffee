@@ -6,8 +6,7 @@ class Summary extends Backbone.View
 
     render: =>
         if App.stats.get 'data'
-            min_r = 2
-            max_r = 15
+            max_h = 15
             data = App.stats.get('data').map (a) ->
                     date: new Date a[0], 1
                     value: a[1]
@@ -17,7 +16,10 @@ class Summary extends Backbone.View
 
             h = @$el.height() - 25
             x = d3.time.scale()
-                    .domain(d3.extent data.map (a) -> a.date)
+                    .domain([
+                        d3.min(data.map (a) -> new Date a.date.getUTCFullYear(), a.date.getUTCMonth() - 1, a.date.getUTCDate()),
+                        d3.max(data.map (a) -> new Date a.date.getUTCFullYear(), a.date.getUTCMonth() + 1, a.date.getUTCDate())
+                    ])
                     .range([20, @$el.width() - 20])
 
             y = d3.scale.linear()
@@ -28,19 +30,21 @@ class Summary extends Backbone.View
             context = svg.append("g")
                     .attr("class", "context")
 
-            # circles
+            # lines
             r = d3.scale.linear()
                 .domain([1, d3.max data.map (a) -> a.value])
-                .range([min_r, max_r])
+                .range([2, max_h])
 
-            context.selectAll("circle")
+            context.selectAll("rect")
                 .data(data.filter (a) -> a.value > 0)
                 .enter()
-                .append("circle")
-                .attr("transform", "translate(0, #{h - max_r * 2 - 10})")
-                .attr("cx", (d) -> x d.date)
-                .attr("cy", max_r + 5)
-                .attr("r", (d) -> r d.value)
+                .append("rect")
+                .attr("transform", "translate(0, 10)")
+                .attr("x", (d) -> -1 + x d.date)
+                .attr("width", 2)
+                .attr("y", (d) -> h / 2 - r d.value)
+                .attr("height", (d) -> 2 * r d.value)
+
 
             # context axis
             axis = d3.svg.axis().scale(x).orient("bottom")
@@ -50,18 +54,19 @@ class Summary extends Backbone.View
                 .attr("transform", "translate(0, #{h})")
                 .call(axis)
 
-            if App.results.get 'extent'
+
+            if App.results.is_proper_subset()
                 padding = 6
                 min = App.results.get('extent')[0]
                 max = App.results.get('extent')[1]
                 context.append("g")
                     .attr("class", "x brush")
                     .append("rect")
-                    .attr("transform", "translate(0, #{h - max_r * 2 - 10})")
+                    .attr("transform", "translate(0, #{h / 2 - max_h})")
                     .attr("y", 0)
-                    .attr("height", max_r * 2 + 9)
-                    .attr("x", x(min) - max_r)
-                    .attr("width", x(max) - x(min) + max_r * 2)
+                    .attr("height", max_h * 2 + 20)
+                    .attr("x", x(min) - 5)
+                    .attr("width", x(max) - x(min) + 10)
                 
 
 

@@ -4,8 +4,6 @@ class Modal extends Backbone.View
 
     render: =>
         if App.selected.get 'id'
-            console.log App.selected.toJSON()
-
             data = App.selected.toJSON()
             data.date_string = format_date_range data.start, data.end
             data.locations = _.zip(data.municipality, data.country, data.region).map (x) ->

@@ -4,8 +4,9 @@ class QueryForm extends Backbone.View
             @$('form').submit()
 
         'submit form': ->
+            q = @$('input').val().trim()
             App.query.set
-                q: @$('input').val()
+                q: if q.length then q else '*'
                 filters: []
                 page: 0
             @$('input').blur()

@@ -13,8 +13,11 @@ class Timeline extends Backbone.View
         epsilon = .75 * h / Config.packing
 
         x = d3.time.scale()
-              .domain(d3.extent data.map (a) -> a.date)
-              .range([padding, @$el.width() - padding])
+            .domain([
+                d3.min(data.map (a) -> new Date a.date.getUTCFullYear(), a.date.getUTCMonth() - 1, a.date.getUTCDate()),
+                d3.max(data.map (a) -> new Date a.date.getUTCFullYear(), a.date.getUTCMonth() + 1, a.date.getUTCDate())
+            ])
+            .range([padding, @$el.width() - padding])
 
         y = d3.scale.linear()
               .domain(d3.extent data.map (a) -> a.pos)
