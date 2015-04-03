@@ -107,13 +107,18 @@ article {
         height: 100%;
     }
     div.step {
-        padding: 30% 10px 0 10px;
+        display: table;
         background-color: #efefef;
         color: #333;
         transition: background 0.2s ease;
         &:hover {
             background-color: #ddd;
             color: #555;
+        }
+        i {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
         }
     }
 }
