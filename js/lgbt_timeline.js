@@ -17,6 +17,8 @@
     rows: 30
   };
 
+  App = App || {};
+
   solr_query_uri = function(params) {
     var p;
     p = jQuery.param(_.defaults(params, Config.search_params));
@@ -74,48 +76,48 @@
       }
     };
 
-    Results.prototype.build_results = function(q, page) {
-      return $.get(solr_query_uri({
-        q: q,
-        start: page * Config.rows,
-        rows: Config.rows
-      }), (function(_this) {
-        return function(data) {
-          if (data.response.numFound) {
-            return _this.set({
-              min: new Date(data.stats.stats_fields.start.min),
-              max: new Date(data.stats.stats_fields.start.max),
-              start: data.response.start,
-              count: data.response.numFound,
-              index: _.indexBy(data.response.docs, "id"),
-              extent: d3.extent(data.response.docs.map(function(x) {
-                return new Date(x.start);
-              })),
-              data: data.response.docs.map(function(x, i) {
-                return {
-                  id: x.id,
-                  pos: i,
-                  v: x["_version_"],
-                  date: new Date(x.start),
-                  progress: x.progress,
-                  category: _.head(x.category),
-                  title: x.title
-                };
-              }).reverse()
-            });
-          } else {
-            return _this.set({
-              min: null,
-              max: null,
-              start: 0,
-              count: 0,
-              index: {},
-              data: [],
-              extent: null
-            });
-          }
+    Results.prototype.parse = function(data) {
+      if (data.response.numFound) {
+        return {
+          min: new Date(data.stats.stats_fields.start.min),
+          max: new Date(data.stats.stats_fields.start.max),
+          start: data.response.start,
+          count: data.response.numFound,
+          index: _.indexBy(data.response.docs, "id"),
+          extent: d3.extent(data.response.docs.map(function(x) {
+            return new Date(x.start);
+          })),
+          data: data.response.docs.map(function(x, i) {
+            return {
+              id: x.id,
+              pos: i,
+              v: x["_version_"],
+              date: new Date(x.start),
+              progress: x.progress,
+              category: _.head(x.category),
+              title: x.title
+            };
+          }).reverse()
         };
-      })(this));
+      } else {
+        return {
+          min: null,
+          max: null,
+          start: 0,
+          count: 0,
+          index: {},
+          data: [],
+          extent: null
+        };
+      }
+    };
+
+    Results.prototype.urlRoot = function() {
+      return solr_query_uri({
+        q: App.query.get('q') || "*",
+        start: App.query.get('page') * Config.rows,
+        rows: Config.rows
+      });
     };
 
     return Results;
@@ -129,26 +131,26 @@
       return Stats.__super__.constructor.apply(this, arguments);
     }
 
-    Stats.prototype.build_summary = function(q) {
-      return $.get(solr_query_uri({
-        q: q,
+    Stats.prototype.urlRoot = function() {
+      return solr_query_uri({
+        q: App.query.get('q') || "*",
         rows: 0,
         facet: true,
         "facet.field": "year",
         "facet.mincount": 1
-      }), (function(_this) {
-        return function(data) {
-          var years;
-          years = data.facet_counts.facet_fields.year.map(function(x) {
-            return parseInt(x, 10);
-          });
-          return _this.set({
-            data: _.zip.apply(null, _.partition(years, function(_x, i) {
-              return i % 2 === 0;
-            }))
-          });
-        };
-      })(this));
+      });
+    };
+
+    Stats.prototype.parse = function(data) {
+      var years;
+      years = data.facet_counts.facet_fields.year.map(function(x) {
+        return parseInt(x, 10);
+      });
+      return {
+        data: _.zip.apply(null, _.partition(years, function(_x, i) {
+          return i % 2 === 0;
+        }))
+      };
     };
 
     return Stats;
@@ -238,7 +240,7 @@
         if (App.results.offset() < App.results.get('count')) {
           App.query.prev();
         }
-        return App.results.build_results(App.query.get('q'), App.query.get('page'));
+        return App.results.fetch();
       }
     };
 
@@ -271,7 +273,7 @@
         if (App.results.get('start') > 0) {
           App.query.next();
         }
-        return App.results.build_results(App.query.get('q'), App.query.get('page'));
+        return App.results.fetch();
       }
     };
 
@@ -424,12 +426,12 @@
         q = this.$('input').val().trim();
         App.query.set({
           q: q.length ? q : '*',
-          filters: [],
+          filters: {},
           page: 0
         });
         this.$('input').blur();
-        App.results.build_results(App.query.get('q'), 0);
-        App.stats.build_summary(App.query.get('q'));
+        App.results.fetch();
+        App.stats.fetch();
         return false;
       }
     };
@@ -553,16 +555,21 @@
 
   })(Backbone.View);
 
-  App = {
-    query: new Query({
-      q: "*"
-    }),
-    results: new Results,
-    stats: new Stats,
-    selected: new Backbone.Model,
-    preview: new Backbone.Model,
-    categories: new Categories
-  };
+  App = App || {};
+
+  App.query = new Query({
+    q: "*"
+  });
+
+  App.results = new Results;
+
+  App.stats = new Stats;
+
+  App.selected = new Backbone.Model;
+
+  App.preview = new Backbone.Model;
+
+  App.categories = new Categories;
 
   $(function() {
     new QueryForm({
@@ -585,8 +592,8 @@
     });
     return App.categories.fetch({
       success: function() {
-        App.results.build_results(App.query.get('q'), App.query.get('page'));
-        return App.stats.build_summary(App.query.get('q'));
+        App.results.fetch();
+        return App.stats.fetch();
       }
     });
   });

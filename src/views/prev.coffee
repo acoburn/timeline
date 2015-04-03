@@ -11,4 +11,4 @@ class Prev extends Backbone.View
     events:
         'click': ->
             App.query.prev() if App.results.offset() < App.results.get 'count'
-            App.results.build_results App.query.get('q'), App.query.get('page')
+            App.results.fetch()

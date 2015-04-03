@@ -11,4 +11,4 @@ class Next extends Backbone.View
     events:
         'click': ->
             App.query.next() if App.results.get('start') > 0
-            App.results.build_results App.query.get('q'), App.query.get('page')
+            App.results.fetch()
