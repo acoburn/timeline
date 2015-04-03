@@ -94,7 +94,7 @@
               data: data.response.docs.map(function(x, i) {
                 return {
                   id: x.id,
-                  pos: i % Config.packing,
+                  pos: i,
                   v: x["_version_"],
                   date: new Date(x.start),
                   progress: x.progress,
@@ -465,11 +465,14 @@
 
     Timeline.prototype.initialize = function() {
       App.results.on('change', this.render);
-      return $(window).resize(_.debounce(this.render, 300));
+      $(window).resize(_.debounce(this.render, 300));
+      return this.tip = d3.tip().attr('class', 'tooltip').offset([-10, 0]).html(function(d) {
+        return d.title;
+      });
     };
 
     Timeline.prototype.render = function() {
-      var axis, categories, colors, context, data, epsilon, h, padding, r, svg, tip, x, y;
+      var axis, categories, colors, context, data, epsilon, h, padding, r, rand, svg, tip, x, y;
       padding = 25;
       data = App.results.get('data');
       this.$el.html('<svg></svg>');
@@ -484,24 +487,27 @@
           }))
         ]).range([padding, this.$el.width() - padding]);
         y = d3.scale.linear().domain(d3.extent(data.map(function(a) {
-          return a.pos;
+          return a.pos % Config.packing;
         }))).range([h - epsilon / 2 - padding, epsilon / 2 + padding]);
         svg = d3.select(this.$el.find('svg')[0]);
+        tip = this.tip;
         context = svg.append("g").attr("class", "context");
-        tip = d3.tip().attr('class', 'tooltip').offset([-10, 0]).html(function(d) {
-          return d.title;
-        });
-        svg.call(tip);
         categories = d3.scale.ordinal().domain(App.categories.toJSON().map(function(x) {
           return x.category;
         })).range(_.range(App.categories.length));
-        colors = d3.scale.linear().domain([0, App.categories.length]).range(["orange", "blue"]);
+        colors = d3.scale.linear().domain([0, App.categories.length]).range(["orange", "green"]);
+        svg.call(tip);
         r = d3.scale.linear().domain([
           1, d3.max(data.map(function(a) {
             return a.value;
           }))
         ]).range([2, 15]);
-        context.selectAll("circle").data(data).enter().append("circle").attr("data-title", function(d) {
+        rand = Math.floor(Math.random() * data.length);
+        context.selectAll("circle").data(data).enter().append("circle").attr("class", function(d) {
+          return "category" + categories(d.category);
+        }).attr("data-category", function(d) {
+          return categories(d.category);
+        }).attr("data-title", function(d) {
           return d.title;
         }).attr("data-id", function(d) {
           return d.id;
@@ -514,14 +520,27 @@
         }).attr("cx", function(d) {
           return x(d.date);
         }).attr("cy", function(d) {
-          return y(d.pos) + d.v % epsilon - epsilon / 2;
-        }).attr("r", 6).on('mouseover', tip.show).on('mouseout', tip.hide).on('click', tip.hide);
+          return y(d.pos % Config.packing) + d.v % epsilon - epsilon / 2;
+        }).attr("r", 6).on('mouseover', function(d) {
+          tip.show(d, this).style("border-color", colors(categories(d.category)));
+          return context.selectAll("circle.category" + (categories(d.category))).classed("highlight", true);
+        }).on('mouseout', function(d) {
+          tip.hide(d, this);
+          return context.selectAll("circle.highlight").classed("highlight", false);
+        }).on('click', tip.hide).filter(function(d) {
+          return rand === d.pos;
+        }).each(function(d) {
+          return tip.show(d, this).style("border-color", colors(categories(d.category)));
+        });
         axis = d3.svg.axis().scale(x).orient("bottom");
         return context.append("g").attr("class", "x axis").attr("transform", "translate(0, " + h + ")").call(axis);
       }
     };
 
     Timeline.prototype.events = {
+      "mouseleave circle": function() {
+        return this.$("circle.highlight").removeClass('highlight');
+      },
       "click circle": function(e) {
         return App.selected.set(App.results.get('index')[$(e.target).data('id')]);
       }

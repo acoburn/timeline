@@ -26,7 +26,7 @@ class Results extends Backbone.Model
                    extent: d3.extent data.response.docs.map (x) -> new Date x.start
                    data: data.response.docs.map((x, i) ->
                             id: x.id
-                            pos: i % Config.packing
+                            pos: i
                             v: x["_version_"]
                             date: new Date x.start
                             progress: x.progress

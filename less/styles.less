@@ -134,10 +134,12 @@ article {
   max-width: 250px;
   z-index: 2000;
   font-weight: bold;
-  padding: 6px;
+  padding: 4px;
   background: rgba(0, 0, 0, 0.6);
+  border: 4px solid black;
   color: #fff;
   border-radius: 8px;
+  transition: opacity 0.5s ease;
 }
 
 /* Creates a small triangle extender for the tooltip */
@@ -155,9 +157,16 @@ article {
 
 /* Style northward tooltips differently */
 .tooltip.n:after {
-  margin: -1px 0 0 0;
+  margin: 3px 0 0 0;
   top: 100%;
   left: 0;
+}
+
+.highlight {
+    transition: stroke-width 0.5s ease;
+    stroke: black;
+    stroke-opacity: .8;
+    stroke-width: 3;
 }
 
 #summary {
