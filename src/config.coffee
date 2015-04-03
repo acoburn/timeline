@@ -1,5 +1,5 @@
 Config =
-    solr: "/solr/lgbt/select?"
+    solr: "solr/select?"
     search_params:
         wt: "json"
         sort: "start desc"
