@@ -164,7 +164,7 @@
 
     Query.prototype.defaults = {
       q: null,
-      filters: [],
+      filters: {},
       page: 0
     };
 
@@ -375,6 +375,9 @@
             return a.value;
           }))
         ]).range([h, 0]);
+        svg.on("click", function() {
+          return console.log(x.invert(d3.mouse(this)[0] + 10).toISOString());
+        });
         context = svg.append("g").attr("class", "context");
         r = d3.scale.linear().domain([
           1, d3.max(data.map(function(a) {

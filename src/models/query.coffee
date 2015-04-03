@@ -1,7 +1,7 @@
 class Query extends Backbone.Model
     defaults:
         q: null
-        filters: []
+        filters: {}
         page: 0
 
     # these seem backwards because results are

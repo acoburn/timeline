@@ -26,6 +26,9 @@ class Summary extends Backbone.View
                     .domain([0, d3.max data.map (a) -> a.value])
                     .range([h, 0])
 
+            svg.on("click", ->
+                console.log x.invert(d3.mouse(this)[0] + 10).toISOString())
+
             # context data
             context = svg.append("g")
                     .attr("class", "context")
@@ -44,7 +47,6 @@ class Summary extends Backbone.View
                 .attr("width", 2)
                 .attr("y", (d) -> h / 2 - r d.value)
                 .attr("height", (d) -> 2 * r d.value)
-
 
             # context axis
             axis = d3.svg.axis().scale(x).orient("bottom")
@@ -68,5 +70,8 @@ class Summary extends Backbone.View
                     .attr("x", x(min) - 5)
                     .attr("width", x(max) - x(min) + 10)
                 
-
+    #events:
+        #'click': (e) ->
+            #if App.results.is_proper_subset()
+                #console.log e.pageX
 
