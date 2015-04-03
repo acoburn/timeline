@@ -6,7 +6,7 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Config = {
-    solr: "/solr/lgbt/select?",
+    solr: "solr/select?",
     search_params: {
       wt: "json",
       sort: "start desc",
