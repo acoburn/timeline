@@ -4,14 +4,15 @@ js: javascript
 
 javascript:
 	@echo "Compiling javascript ... \c"
-	@cat ./src/config.coffee \
-		./src/helper.coffee \
+	@cat ./src/config.coffee | \
+		./node_modules/coffee-script/bin/coffee \
+			--compile --stdio --bare > ./js/sample_config.js
+	@cat ./src/helper.coffee \
 		./src/models/results.coffee \
 		./src/models/stats.coffee \
 		./src/models/query.coffee \
 		./src/collections/categories.coffee \
-		./src/views/prev.coffee \
-		./src/views/next.coffee \
+		./src/views/step.coffee \
 		./src/views/modal.coffee \
 		./src/views/summary.coffee \
 		./src/views/query_form.coffee \
